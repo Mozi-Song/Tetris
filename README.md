@@ -1,3 +1,3 @@
 # Tetris
-A simple Russian Tetris Game
-<img src="/resource/pane.PNG" width="500">
+A simple Russian Tetris Game<br>
+<img src="/resource/pane.PNG" width="300">
