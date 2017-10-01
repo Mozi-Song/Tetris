@@ -17,7 +17,7 @@ import com.tetris.Shape.Tetrominoes;
 public class Board extends JPanel implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	final int BoardWidth = 10;
-	final int BoardHeight = 22;
+	final int BoardHeight = 20;
 	
 	int curX, curY;
 	Shape curPiece;
@@ -31,6 +31,10 @@ public class Board extends JPanel implements ActionListener{
 			new Color(102,204,102), new Color(102,102,204),
 			new Color(204,204,102), new Color(204,102,204),
 			new Color(102,204,204), new Color(218,170,0)};
+//	static Color[] colors = {
+//			Color.WHITE, Color.blue, Color.MAGENTA, Color.GREEN,
+//			Color.PINK, Color.ORANGE, Color.YELLOW, Color.gray
+//	};
 	public Board(Tetris parent){
 		setFocusable(true);
 		timer = new Timer(400, this);
@@ -46,19 +50,19 @@ public class Board extends JPanel implements ActionListener{
 		timer.start();
 	}
 	void pause() {
-		System.out.println("ispaused:" + isPaused);
 		if(!isPaused) {
 			isPaused = true;
+			statusBar.setText("paused");
 			timer.stop();
 		}
 		else {
 			isPaused = false;
+			statusBar.setText(Integer.toString(numLinesRemoved));
 			timer.start();
 		}
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("timer");
 		if(hasDropped){
 			newPiece();
 		}else{
@@ -66,14 +70,13 @@ public class Board extends JPanel implements ActionListener{
 		}
 	}
 	void newPiece(){
-		System.out.println("newpiece");
 		curPiece.setRandomShape();
 		curX = BoardWidth / 2;
 		curY = BoardHeight - 1 - curPiece.getMaxY();
 		hasDropped = false;
 		if(!tryMove(curPiece, curX, curY)){
 			timer.stop();
-			statusBar.setText("Game over!");
+			statusBar.setText("Game over! "+Integer.toString(numLinesRemoved));
 		}
 	}
 	void oneLineDown(){
@@ -84,7 +87,6 @@ public class Board extends JPanel implements ActionListener{
 		repaint();
 	}
 	void pieceDropped(){
-		System.out.println("piece dropped");
 		for(int[] coord : curPiece.getCoords()){
 			int x = coord[0]+curX, y = coord[1]+curY;
 			dropped[x][y] = curPiece.tetrominoes;
@@ -110,7 +112,6 @@ public class Board extends JPanel implements ActionListener{
 				count++;
 				//move upper lines down by one line
 				for(int k=j+1; k<BoardHeight; k++){
-					System.out.println("k:"+k);
 					for(int n=0; n<BoardWidth; n++)
 						dropped[n][k-1] = dropped[n][k];
 				}
@@ -130,7 +131,6 @@ public class Board extends JPanel implements ActionListener{
 				return false;
 			}
 			if(dropped[x][y] != Tetrominoes.NoShape){
-				System.out.println("cannot move more!");
 				return false;
 			}
 		}
@@ -147,7 +147,7 @@ public class Board extends JPanel implements ActionListener{
 			for(int j=0; j<BoardHeight; j++){
 				Tetrominoes t = dropped[i][j];
 				if(t != Tetrominoes.NoShape)
-					drawSquare(g, t, i*squareWidth(), (BoardHeight-1-j)*squareHeight());
+					drawSquare(g, t, i*squareWidth(), (BoardHeight-j-1)*squareHeight());
 			}
 		}
 		for(int[] coord : curPiece.getCoords()){
